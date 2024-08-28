@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/scheduler/build/scheduler/scheduler.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Documents/JSON_api/jar_files/javax.json-api-1.1.4.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Documents/JSON_api/jar_files/javax.json-1.0.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/statlibs/build/statlibs/statlibs_R15G01b48/dclib/httpclient-4.5.3.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/statlibs/build/statlibs/statlibs_R15G01b48/dclib/httpcore-4.4.7.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/jars/servlet-api.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/libs/build/libs/libs_R17G01b133/dclib/velocity-1.7-dep.jar"/>
+	<classpathentry kind="lib" path="H:/admin_ui/build/admin_ui/AdminUI.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/busyhourcfg/build/busyhourcfg/BusyHour.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/common_utilities/build/common_utilities/common.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/engine/build/engine/engine.jar"/>
+	<classpathentry kind="lib" path="H:/OSS-Eniq/repository/build/repository/repository.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

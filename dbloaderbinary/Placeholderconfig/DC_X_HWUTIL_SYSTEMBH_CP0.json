@@ -1,0 +1,1 @@
+{"BHLevel":"DC_X_HWUTIL_SYSTEMBH","BHType":"CP0","Description":"SYSTEMBH","whereCondition":"","formula":"SUM(NLWP)","source_tables":["DC_X_HWUTIL_PROC_RAW"],"Keys":["DC_X_HWUTIL_PROC_RAW.OSS_ID","DC_X_HWUTIL_PROC_RAW.HOSTNAME"]}

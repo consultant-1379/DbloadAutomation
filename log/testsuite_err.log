@@ -1,0 +1,3 @@
+Exception in thread "main" java.lang.NullPointerException
+	at com.ericsson.main.Main.getPropsforParseAction(Main.java:333)
+	at com.ericsson.main.Main.main(Main.java:147)

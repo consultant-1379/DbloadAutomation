@@ -1,0 +1,2 @@
+DATETIME,totalmem,usedmem,freemem,totalswap,usedswap,freeswap,totalmemKB,usedmemKB,freememKB,totalswapKB,usedswapKB,freeswapKB
+2022-09-19 01:30,101193809920,25501954048,72949338112,134213632,0,134213632,98822080,24903268,71240572,131068,0,131068

@@ -1,0 +1,138 @@
+#!/bin/bash
+#####################################################################################################
+#Usage:- The script designed to resolve the standard library's for the Automation tool 
+#	     and start the dbload process
+#
+######################################################################################################
+
+basedir=`dirname $(readlink -f $0)`
+platform_dir=/eniq/sw/platform/
+interfacename=$1
+libs_directory=`find $platform_dir -type d -iname "*libs-*"|grep /"libs"`
+scheduler_directory=`find $platform_dir -type d -iname "*scheduler-*"`
+engine_directory=`find $platform_dir -type d -iname "*engine-*"`
+repo_directory=`find $platform_dir -type d -iname "*repository-*"`
+common_directory=`find $platform_dir -type d -iname "*common-*"`
+license_directory=`find $platform_dir -type d -iname "*licensing-*"`
+dwhmanager_directory=`find $platform_dir -type d -iname "*dwhmanager-*"`
+statlibs_directory=`find $platform_dir -type d -iname "*statlibs-*"`
+runtime_dir=/eniq/sw/runtime
+jargs="-Xmx256M -XX:+ExitOnOutOfMemoryError -Djava.basedir=$basedir/ -Dlog4j.configuration=file:$basedir/log4j.properties"
+
+#shift
+if [ $# -gt 1 ]; then
+	while(($#)) ; do
+		case $1 in
+			-t)
+			shift
+			interfacename=$1
+			shift
+			;;
+			-c)
+			shift
+			arg1=Config
+			shift
+			;;
+			-bh)
+			shift
+			arg1=BusyHour
+			shift
+			;;
+			-g)
+			shift
+			arg1=Aggregation
+			shift
+			;;
+			*)
+			echo " Wrong type of an argument encountered. Hence Exiting"
+			exit 2
+			;;
+		esac
+		done
+
+fi
+MAIN_CLASS=com.ericsson.main.Main
+if [ "$interfacename"x == "x" ]; then
+	echo "[[Warning]]: Please give the valid Tech pack name or interfacename as an argumnet
+			Example:- ./dbloadstart INTF_DC_E_OCC_COUNTERS"
+	exit 1
+fi
+####reslove java/bin/java
+if [ -d $runtime_dir ]; then
+	jvmdir=/eniq/sw/runtime/java/bin/
+else
+	echo "[[Warning]]: runtime directory /eniq/sw/runtime was not found. Please install runtime module"
+	exit 2
+fi
+jargs=$jargs' -Djava.util.logging.config.file=log.properties -Ddc5000.config.directory=/eniq/sw/conf -DCONF_DIR=/eniq/sw/conf -DPMDATA_DIR=/eniq/data/pmdata -DPMDATA_SIM_DIR=/eniq/data/pmdata_sim -DPMDATA_SOEM_DIR=/eniq/data/pmdata_soem -DETLDATA_DIR=/eniq/data/etldata -DEVENTS_ETLDATA_DIR=/eniq/data/etldata_ -DLOG_DIR=/eniq/log/sw_log -DLOCAL_LOGS_DIR=/eniq/local_logs -DREJECTED_DIR=/eniq/data/rejected -DREFERENCE_DIR=/eniq/data/reference -DPLATFORM_DIR=/eniq/sw/platform -DARCHIVE_DIR=/eniq/archive'
+if [ -d $basedir/extlib ]; then
+        for jar in `ls $basedir/extlib/*.jar`; do
+                CLASSPATH=$CLASSPATH:$jar
+        done
+fi
+if [ "$libs_directory"x == "x" ]; then
+	echo "[[Warning]]: libs directory  was not found in  /eniq/sw/platform. Please check and install libs-R* platform module"
+	exit 2
+else
+	for jar in `ls $libs_directory/dclib/*.jar`; do 
+		CLASSPATH=$CLASSPATH:$jar
+	done
+fi
+if [ "$scheduler_directory"x == "x" ]; then
+	echo "[[Warning]]: scheduler directory  was not found in  /eniq/sw/platform. Please check and install scheduler-R* platform module"
+	exit 2
+else
+	CLASSPATH=$CLASSPATH:$scheduler_directory/dclib/scheduler.jar
+fi
+if [ "$engine_directory"x == "x" ]; then
+	echo "[[Warning]]: engine directory  was not found in  /eniq/sw/platform. Please check and install engine-R* platform module"
+	exit 2
+else
+	CLASSPATH=$CLASSPATH:$engine_directory/dclib/engine.jar
+fi
+if [ "$repo_directory"x == "x" ]; then
+	echo "[[Warning]]: repository directory  was not found in  /eniq/sw/platform. Please check and install repository-R* platform module"
+	exit 2
+else
+	CLASSPATH=$CLASSPATH:$repo_directory/dclib/repository.jar
+fi
+if [ "$common_directory"x == "x" ]; then
+	echo "[[Warning]]: common directory  was not found in  /eniq/sw/platform. Please check and install common-R* platform module"
+	exit 2
+else
+	CLASSPATH=$CLASSPATH:$common_directory/dclib/common.jar
+fi
+if [ "$license_directory"x == "x" ]; then
+        echo "[[Warning]]: common directory  was not found in  /eniq/sw/platform. Please check and install licensing-R* platform module"
+        exit 2
+else
+        CLASSPATH=$CLASSPATH:$license_directory/dclib/licensing.jar
+fi
+if [ "$dwhmanager_directory"x == "x" ]; then
+        echo "[[Warning]]: common directory  was not found in  /eniq/sw/platform. Please check and install dwhmanager-R* platform module"
+        exit 2
+else
+        CLASSPATH=$CLASSPATH:$dwhmanager_directory/dclib/dwhmanager.jar
+fi
+if [ "$statlibs_directory"x == "x" ]; then
+        echo "[[Warning]]: common directory  was not found in  /eniq/sw/platform. Please check and install statlibs-R* platform module"
+        exit 2
+else
+	for jar in `ls $statlibs_directory/dclib/*.jar`; do
+                CLASSPATH=$CLASSPATH:$jar
+        done
+
+fi
+CLASSPATH=$CLASSPATH:$runtime_dir/tomcat/lib/servlet-api.jar
+CLASSPATH=$CLASSPATH:$runtime_dir/tomcat/webapps/adminui/WEB-INF/classes/
+if [ !-f $basedir/DbloadTesting.jar ]; then
+	echo "[[Warning]]: DbloadTesting  was not found . Please check and install"
+	exit 2
+else
+	CLASSPATH=$CLASSPATH:$basedir/DbloadTesting.jar
+	#CLASSPATH=$CLASSPATH:$basedir/BH_dbloading.jar
+	cd $basedir
+fi
+
+$jvmdir/java $jargs -classpath $CLASSPATH $MAIN_CLASS $interfacename $arg1
+#/eniq/sw/runtime/java/bin/java -Djava.util.logging.config.file=log.properties -Ddc5000.config.directory=/eniq/sw/conf -DCONF_DIR=/eniq/sw/conf -DPMDATA_DIR=/eniq/data/pmdata -DPMDATA_SIM_DIR=/eniq/data/pmdata_sim -DPMDATA_SOEM_DIR=/eniq/data/pmdata_soem -DETLDATA_DIR=/eniq/data/etldata -DEVENTS_ETLDATA_DIR=/eniq/data/etldata_ -DLOG_DIR=/eniq/log/sw_log -DLOCAL_LOGS_DIR=/eniq/local_logs -DREJECTED_DIR=/eniq/data/rejected -DREFERENCE_DIR=/eniq/data/reference -DPLATFORM_DIR=/eniq/sw/platform -DARCHIVE_DIR=/eniq/archive -classpath /eniq/sw/platform:/eniq/sw/platform/libs-R14G02b123/dclib/*.jar:/eniq/sw/platform/libs-R14G02b123/dclib/sajdbc4.jar:/eniq/sw/platform/repository-R28H01_EC04b1841/dclib/repository.jar:/eniq/sw/platform/engine-R28J01_EC05b3577/dclib/engine.jar:/eniq/sw/platform/common-R24B02b1452/dclib/common.jar:/eniq/sw/platform/libs-R14G02b123/dclib/jsch-0.1.54.jar:/eniq/sw/platform/scheduler-R18D01b500/dclib/scheduler.jar:./DbloadTesting.jar com.ericsson.main.Main $1
